@@ -10,14 +10,14 @@ angular.module('nativeTransitionsModule', []);
 // Emit event $openCloseMenuPanel from your app to open or close the menu panel. ex: $rootScope.$emit('$openCloseMenuPanel').
 
 angular.module('nativeTransitionsModule')
-    .service('NativeTransitions', ['$window', '$state', '$rootScope',
+    .service('NativeTransitions', ['$window', '$state', '$rootScope', '$timeout',
 
-        function ($window, $state, $rootScope) {
+        function ($window, $state, $rootScope, $timeout) {
             var operateDrawer = function(action, origin) {
                 if (action === 'open') {
                     // State of a blank state and empty controller. Idea is to load really fast to clear out the current webview's contents. This should probably be in java to hide the body (display none).
                     $state.go('root.blank');
-                    setTimeout(function() {
+                    $timeout(function() {
                         // State of your menu Panel
                         $state.go('root.menuPanel');
                     },10);
@@ -30,7 +30,7 @@ angular.module('nativeTransitionsModule')
                     },
                     function () {
                         if (action === 'open') {
-                            setTimeout(function() {
+                            $timeout(function() {
                                 $rootScope.isMenuBinded = true;
                             },10);
                         }
