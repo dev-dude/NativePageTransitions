@@ -92,26 +92,7 @@ public class NativePageTransitions extends CordovaPlugin {
     _callbackContext = callbackContext;
 
     final JSONObject json = args.getJSONObject(0);
-    final String href = json.isNull("href") ? null : json.getString("href");
 
-    // check whether or not the file exists
-    if (href != null && !"null".equals(href)) {
-      if (!href.startsWith("#") && href.contains(".html")) {
-        String localFile = href;
-        if (!href.endsWith(".html")) {
-          localFile = href.substring(0, href.indexOf(".html") + 5);
-        }
-        try {
-          webView.getContext().getAssets().open("www/" + localFile);
-        } catch (IOException ignore) {
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "href .html file not found: " + href));
-          return false;
-        }
-      } else if (!href.startsWith("#")) {
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "href must be null, a .html file or a #navigationhash: " + href));
-        return false;
-      }
-    }
 
     calledFromJS = true;
 
@@ -135,21 +116,9 @@ public class NativePageTransitions extends CordovaPlugin {
           imageView.setImageBitmap(bitmap);
           bringToFront(imageView);
 
-          if (href != null && !"null".equals(href)) {
-            if (!href.startsWith("#") && href.contains(".html")) {
-              webView.loadUrlIntoView(HREF_PREFIX + href, false);
-            } else {
-              // it's a #hash
-              String url = webView.getUrl();
-              // strip any existing hash
-              if (url.contains("#")) {
-                url = url.substring(0, url.indexOf("#"));
-              }
-              webView.loadUrlIntoView(url + href, false);
-            }
-          } else {
-            doSlideTransition();
-          }
+
+          doSlideTransition();
+
         }
       });
 
@@ -198,21 +167,8 @@ public class NativePageTransitions extends CordovaPlugin {
             bringToFront(imageView2);
           }
 
-          if (href != null && !"null".equals(href)) {
-            if (!href.startsWith("#") && href.contains(".html")) {
-              webView.loadUrlIntoView(HREF_PREFIX + href, false);
-            } else {
-              // it's a #hash
-              String url = webView.getUrl();
-              // strip any existing hash
-              if (url.contains("#")) {
-                url = url.substring(0, url.indexOf("#"));
-              }
-              webView.loadUrlIntoView(url + href, false);
-            }
-          } else {
-            doDrawerTransition();
-          }
+          doDrawerTransition();
+
         }
       });
 
@@ -233,21 +189,9 @@ public class NativePageTransitions extends CordovaPlugin {
           webView.setDrawingCacheEnabled(false);
           imageView.setImageBitmap(bitmap);
 
-          if (href != null && !"null".equals(href)) {
-            if (!href.startsWith("#") && href.contains(".html")) {
-              webView.loadUrlIntoView(HREF_PREFIX + href, false);
-            } else {
-              // it's a #hash
-              String url = webView.getUrl();
-              // strip any existing hash
-              if (url.contains("#")) {
-                url = url.substring(0, url.indexOf("#"));
-              }
-              webView.loadUrlIntoView(url + href, false);
-            }
-          } else {
-            doFlipTransition();
-          }
+
+          doFlipTransition();
+
         }
       });
     }
@@ -502,7 +446,8 @@ public class NativePageTransitions extends CordovaPlugin {
                   cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                      bringToFront(webView);
+                        imageView2.setImageBitmap(null);
+                        imageView.startAnimation(animation);
                     }
                   });
                 }
